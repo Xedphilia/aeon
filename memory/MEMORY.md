@@ -23,3 +23,11 @@
 - Subscribers: 0
 - Digest saved: digests/neuroscience-2026-03-04.html
 - Broadcast results: ["No subscribers found in memory/subscribers.json"]
+
+## 2026-03-04T20:25:18.673Z
+**Task:** Neuroscience daily digest (v2)
+- Generated digest with 5 web-sourced stories + 5 X/Twitter posts
+- Topics: Whole-brain intelligence (Notre Dame/Nature Comms), Alzheimer's tau defense (UCLA/UCSF), Chronic pain sensory amplification (CU Anschutz), Accelerated TMS depression (UCLA), New brain barrier (Nature Neuroscience)
+- X posts: working memory fMRI, brain MRI AI model, reward learning chloride homeostasis, sleep EEG deep learning, dopamine neuroimaging
+- Digest saved: digests/neuroscience-2026-03-04-v2.md
+- Telegram: sent successfully via send_telegram
