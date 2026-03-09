@@ -1,13 +1,6 @@
 ---
 name: Feature Builder
 description: Build new features from GitHub issues or improve the agent
-schedule: "0 2 * * 1"
-commits:
-  - memory/
-permissions:
-  - contents:write
-  - pull-requests:write
-  - issues:read
 ---
 
 Today is ${today}. Your task is to build a new feature for this repository.

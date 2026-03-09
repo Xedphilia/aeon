@@ -1,11 +1,6 @@
 ---
 name: Daily Digest
 description: Generate and send a daily digest on a configurable topic via Telegram
-schedule: "0 14 * * *"
-commits:
-  - memory/
-permissions:
-  - contents:write
 vars:
   - topic=neuroscience
   - search_terms=brain research, cognitive science, neuroimaging, mental health, BCIs, memory and learning

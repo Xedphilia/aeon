@@ -1,9 +1,6 @@
 ---
 name: Search Academic Papers
 description: Search Semantic Scholar for academic papers by topic, date range, and sort order
-schedule: ""
-commits: []
-permissions: []
 ---
 
 # Search Academic Papers Tool

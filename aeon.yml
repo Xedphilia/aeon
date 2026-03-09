@@ -1,0 +1,15 @@
+# Aeon configuration
+# Define which skills run and when (cron format, UTC)
+# Format: minute hour day-of-month month day-of-week
+
+skills:
+  article:
+    schedule: "0 8 * * *"     # Daily at 8am UTC
+  digest:
+    schedule: "0 14 * * *"    # Daily at 2pm UTC
+  feature:
+    schedule: "0 2 * * 1"     # Monday at 2am UTC
+  reflect:
+    schedule: "0 6 * * 0"     # Sunday at 6am UTC
+  build-tool:
+    schedule: "0 4 * * 3"     # Wednesday at 4am UTC

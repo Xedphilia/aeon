@@ -2,15 +2,11 @@ name: Run Skill
 
 on:
   schedule:
-    - cron: '0 8 * * *'   # article
-    - cron: '0 2 * * 1'   # feature
-    - cron: '0 6 * * 0'   # reflect
-    - cron: '0 4 * * 3'   # build-tool
-    - cron: '0 14 * * *'  # digest
+    - cron: '0 * * * *'   # Hourly — checks aeon.yml to see if any skill is due
   workflow_dispatch:
     inputs:
       skill:
-        description: 'Skill to run (e.g. article, feature)'
+        description: 'Skill to run (e.g. article, digest)'
         required: true
         type: string
   workflow_call:
@@ -38,15 +34,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Claude Code
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Determine skill name
+      - name: Determine skill
         id: skill
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.event_name }}" = "workflow_call" ]; then
@@ -54,17 +42,39 @@ jobs:
           elif [ "${{ github.event_name }}" = "issues" ]; then
             echo "name=feature" >> "$GITHUB_OUTPUT"
           elif [ "${{ github.event_name }}" = "schedule" ]; then
-            case "${{ github.event.schedule }}" in
-              "0 8 * * *")   echo "name=article" ;;
-              "0 2 * * 1")   echo "name=feature" ;;
-              "0 6 * * 0")   echo "name=reflect" ;;
-              "0 4 * * 3")   echo "name=build-tool" ;;
-              "0 14 * * *")  echo "name=digest" ;;
-              *) echo "::error::No skill matches cron '${{ github.event.schedule }}'"; exit 1 ;;
-            esac >> "$GITHUB_OUTPUT"
+            HOUR=$(date -u +%-H)
+            DOW=$(date -u +%w)
+            CURRENT_SKILL=""
+            while IFS= read -r line; do
+              if [[ "$line" =~ ^\ \ ([a-zA-Z0-9_-]+):\ *$ ]]; then
+                CURRENT_SKILL="${BASH_REMATCH[1]}"
+              fi
+              if [[ "$line" =~ ^\ \ \ \ schedule:\ *\"([^\"]+)\" ]] && [ -n "$CURRENT_SKILL" ]; then
+                IFS=' ' read -r C_MIN C_HOUR C_DOM C_MONTH C_DOW <<< "${BASH_REMATCH[1]}"
+                MATCH=true
+                [ "$C_HOUR" != "*" ] && [ "$C_HOUR" != "$HOUR" ] && MATCH=false
+                [ "$C_DOW" != "*" ] && [ "$C_DOW" != "$DOW" ] && MATCH=false
+                if [ "$MATCH" = true ]; then
+                  echo "name=$CURRENT_SKILL" >> "$GITHUB_OUTPUT"
+                  echo "Matched skill: $CURRENT_SKILL"
+                  break
+                fi
+              fi
+            done < aeon.yml
           fi
 
+      - name: Setup Node.js
+        if: steps.skill.outputs.name != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code
+        if: steps.skill.outputs.name != ''
+        run: npm install -g @anthropic-ai/claude-code
+
       - name: Run skill
+        if: steps.skill.outputs.name != ''
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -79,6 +89,7 @@ jobs:
           claude -p "Today is $TODAY. Read and execute the skill defined in skills/${SKILL_NAME}.md" --dangerously-skip-permissions
 
       - name: Commit results
+        if: steps.skill.outputs.name != ''
         run: |
           git config user.email "aeon@github-actions"
           git config user.name "Aeon"

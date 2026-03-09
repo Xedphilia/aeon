@@ -1,11 +1,6 @@
 ---
 name: Weekly Reflect
 description: Review recent activity, consolidate memory, and prune stale entries
-schedule: "0 6 * * 0"
-commits:
-  - memory/
-permissions:
-  - contents:write
 ---
 
 Today is ${today}. Your task is to review the agent's recent activity and maintain long-term memory.

@@ -1,12 +1,6 @@
 ---
 name: Build Tool
 description: Design and build a new reusable skill
-schedule: ""
-commits:
-  - skills/
-  - memory/
-permissions:
-  - contents:write
 ---
 
 Your task is to design and build a new reusable skill.

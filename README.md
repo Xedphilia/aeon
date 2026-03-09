@@ -15,7 +15,7 @@ Autonomous agent running on GitHub Actions, powered by Claude Code. Writes daily
 | `TELEGRAM_CHAT_ID` | Optional | Your Telegram chat ID from @userinfobot |
 | `XAI_API_KEY` | Optional | X.AI API key for searching X/Twitter |
 
-4. **Customize** — edit `CLAUDE.md` (agent identity), `skills/*.md` (skill prompts), and `memory/MEMORY.md` (seed context)
+4. **Edit `aeon.yml`** — configure which skills run and when
 5. **Test** — go to **Actions > Run Skill > Run workflow** and enter a skill name (e.g. `article`)
 
 ### Getting your auth token
@@ -36,34 +36,58 @@ Autonomous agent running on GitHub Actions, powered by Claude Code. Writes daily
 
 ## How it works
 
-GitHub Actions spins up a VM on a schedule (or manual trigger), clones your repo, and tells Claude Code to read and execute a skill file. Claude reads the skill's instructions, does the work (searching the web, writing files, etc.), then the workflow commits everything back to your repo.
+A GitHub Actions workflow runs every hour, checks `aeon.yml` to see if any skill is due, and if so, tells Claude Code to read and execute that skill's markdown file. After Claude finishes, the workflow commits all changes back to your repo.
 
 ```
-Cron / manual trigger
-  → GitHub Actions VM boots
-    → Clones your repo
+Hourly cron fires
+  → Checks aeon.yml — is any skill scheduled for this hour?
+    → No  → exits immediately (costs ~10 seconds)
+    → Yes → installs Claude Code
       → claude -p "Read and execute skills/article.md"
         → Claude reads the skill, searches the web, writes output
           → Workflow commits all changes back to main
 ```
 
+## Configuration
+
+All scheduling is done in `aeon.yml`:
+
+```yaml
+skills:
+  article:
+    schedule: "0 8 * * *"     # Daily at 8am UTC
+  digest:
+    schedule: "0 14 * * *"    # Daily at 2pm UTC
+  feature:
+    schedule: "0 2 * * 1"     # Monday at 2am UTC
+```
+
+The schedule format is standard cron (`minute hour day-of-month month day-of-week`). All times are UTC.
+
+To disable a skill, remove it from `aeon.yml` or delete its schedule line.
+
 ## Adding a new skill
 
-1. Create `skills/your-skill.md` with a prompt:
+1. Create `skills/your-skill.md` with instructions for Claude:
 
 ```markdown
 ---
 name: My Skill
 description: What this skill does
-schedule: "0 12 * * *"
 ---
 
 Your task is to...
 ```
 
-2. Add the cron schedule to `.github/workflows/run-skill.yml`:
-   - Add the cron under `schedule:`
-   - Add a mapping in the `case` statement in the "Determine skill name" step
+2. Add it to `aeon.yml` with a schedule:
+
+```yaml
+skills:
+  your-skill:
+    schedule: "0 12 * * *"   # Daily at noon UTC
+```
+
+That's it — no workflow changes needed.
 
 ## Trigger feature builds from issues
 
@@ -74,9 +98,6 @@ Add the label `ai-build` to any GitHub issue. The workflow fires automatically a
 ```bash
 # Run any skill locally (requires Claude Code CLI)
 claude -p "Today is $(date +%Y-%m-%d). Read and execute the skill defined in skills/article.md" --dangerously-skip-permissions
-
-# List available skills
-ls skills/
 ```
 
 ## Two-repo strategy
@@ -87,7 +108,7 @@ This repo is a **public template**. For your own instance, we recommend keeping 
 
 1. **Fork this repo** to your own account (e.g. `your-name/aeon-private`). Make it **private**.
 2. Add your secrets to the **private** fork (not the public template).
-3. Customize `CLAUDE.md`, `memory/MEMORY.md`, and skill prompts in your private fork.
+3. Customize `CLAUDE.md`, `aeon.yml`, `memory/MEMORY.md`, and skill prompts in your private fork.
 4. All generated content (articles, digests, memory) stays in your private fork.
 
 ### Pulling updates from the template
@@ -107,6 +128,7 @@ This merges template changes without overwriting your personal content, since yo
 
 ```
 CLAUDE.md           ← agent identity (auto-loaded by Claude Code)
+aeon.yml            ← skill schedules (edit this to configure)
 skills/
   article.md        ← daily article skill
   digest.md         ← daily digest skill

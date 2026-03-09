@@ -1,11 +1,6 @@
 ---
 name: Fetch Tweets
 description: Fetch 10 random tweets from a given X user using the X.AI API
-schedule: ""
-commits:
-  - memory/
-permissions:
-  - contents:write
 vars:
   - username=elonmusk
 ---

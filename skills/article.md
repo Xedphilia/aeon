@@ -1,12 +1,6 @@
 ---
 name: Daily Article
 description: Research trending topics and write a publication-ready article
-schedule: "0 8 * * *"
-commits:
-  - articles/
-  - memory/
-permissions:
-  - contents:write
 ---
 
 Today is ${today}. Your task is to research and write a high-quality article.
