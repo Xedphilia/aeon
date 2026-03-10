@@ -25,7 +25,7 @@ Today is ${today}. Search X for tweets matching **${query}**.
    ```
    Parse the response JSON to extract the assistant's output text.
 
-2. **Save the results** to `memory/tweets-${today}.md`.
+2. **Save the results** to `memory/logs/${today}.md`.
 
 3. **Log to memory** what was fetched.
 

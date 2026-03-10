@@ -3,6 +3,18 @@ name: Changelog
 description: Generate a changelog from recent commits across watched repos
 ---
 
+## Config
+
+This skill reads repos from `memory/watched-repos.md`. If the file doesn't exist yet, create it or skip this skill.
+
+```markdown
+# memory/watched-repos.md
+- owner/repo
+- another-owner/another-repo
+```
+
+---
+
 Read memory/MEMORY.md and memory/watched-repos.md for repos to scan.
 Read the last 7 days of memory/logs/ for context.
 

@@ -3,6 +3,29 @@ name: DeFi Monitor
 description: Check pool health, positions, and yield rates for tracked protocols
 ---
 
+## Config
+
+This skill reads watched contracts and positions from `memory/on-chain-watches.yml`. If the file doesn't exist yet, create it or skip this skill.
+
+```yaml
+# memory/on-chain-watches.yml
+watches:
+  - label: My Wallet
+    address: "0x1234...abcd"
+    chain: ethereum
+    rpc_url: https://eth.llamarpc.com
+    type: wallet
+    threshold: 0.1  # ETH — alert on balance changes above this
+
+  - label: Uniswap Pool
+    address: "0xabcd...5678"
+    chain: ethereum
+    rpc_url: https://eth.llamarpc.com
+    type: contract
+```
+
+---
+
 Read memory/MEMORY.md and memory/on-chain-watches.yml for watched contracts and positions.
 Read the last 2 days of memory/logs/ to track changes over time.
 

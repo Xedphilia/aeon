@@ -3,6 +3,20 @@ name: Token Alert
 description: Notify on price or volume anomalies for tracked tokens
 ---
 
+## Config
+
+This skill reads tracked tokens from a "Tracked Tokens" section in `memory/MEMORY.md`. If the section doesn't exist yet, add it to MEMORY.md or skip this skill.
+
+```markdown
+## Tracked Tokens
+| Token | CoinGecko ID | Alert Threshold |
+|-------|-------------|-----------------|
+| ETH   | ethereum    | 10%             |
+| SOL   | solana      | 10%             |
+```
+
+---
+
 Read memory/MEMORY.md for tracked tokens and alert thresholds.
 Read the last 2 days of memory/logs/ for previous prices to detect changes.
 

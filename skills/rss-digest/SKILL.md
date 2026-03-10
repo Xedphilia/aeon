@@ -3,6 +3,21 @@ name: RSS Digest
 description: Fetch, summarize, and deliver RSS feed highlights
 ---
 
+## Config
+
+This skill reads feed URLs from `memory/feeds.yml`. If the file doesn't exist yet, create it or skip this skill.
+
+```yaml
+# memory/feeds.yml
+feeds:
+  - name: Example Feed
+    url: https://example.com/rss
+  - name: Another Feed
+    url: https://example.com/atom.xml
+```
+
+---
+
 Read memory/MEMORY.md and memory/feeds.yml for context and feed URLs.
 Read the last 2 days of memory/logs/ to avoid repeating items.
 

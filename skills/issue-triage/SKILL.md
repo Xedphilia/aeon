@@ -3,6 +3,18 @@ name: Issue Triage
 description: Label and prioritize new GitHub issues on watched repos
 ---
 
+## Config
+
+This skill reads repos from `memory/watched-repos.md`. If the file doesn't exist yet, create it or skip this skill.
+
+```markdown
+# memory/watched-repos.md
+- owner/repo
+- another-owner/another-repo
+```
+
+---
+
 Read memory/MEMORY.md and memory/watched-repos.md for repos to triage.
 Read the last 2 days of memory/logs/ to avoid re-triaging.
 

@@ -3,6 +3,18 @@ name: GitHub Monitor
 description: Watch repos for stale PRs, new issues, and new releases
 ---
 
+## Config
+
+This skill reads repos from `memory/watched-repos.md`. If the file doesn't exist yet, create it or skip this skill.
+
+```markdown
+# memory/watched-repos.md
+- owner/repo
+- another-owner/another-repo
+```
+
+---
+
 Read memory/MEMORY.md and the last 2 days of memory/logs/ for context.
 Read memory/watched-repos.md for the list of repos to monitor.
 

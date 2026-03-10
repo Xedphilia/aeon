@@ -3,6 +3,18 @@ name: PR Review
 description: Auto-review open PRs on watched repos and post summary comments
 ---
 
+## Config
+
+This skill reads repos from `memory/watched-repos.md`. If the file doesn't exist yet, create it or skip this skill.
+
+```markdown
+# memory/watched-repos.md
+- owner/repo
+- another-owner/another-repo
+```
+
+---
+
 Read memory/MEMORY.md and memory/watched-repos.md for repos to review.
 Read the last 2 days of memory/logs/ to avoid reviewing the same PR twice.
 

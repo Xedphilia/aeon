@@ -3,6 +3,18 @@ name: Code Health
 description: Weekly report on TODOs, dead code, and test coverage gaps
 ---
 
+## Config
+
+This skill reads repos from `memory/watched-repos.md`. If the file doesn't exist yet, create it or skip this skill.
+
+```markdown
+# memory/watched-repos.md
+- owner/repo
+- another-owner/another-repo
+```
+
+---
+
 Read memory/MEMORY.md and memory/watched-repos.md for repos to audit.
 
 Steps:

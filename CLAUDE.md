@@ -32,12 +32,6 @@ Combine the results into one briefing.
 
 This works because skills are just markdown instructions — there's no API boundary. Use this for aggregation skills that synthesize outputs from multiple sources.
 
-## Config Files
-
-- **`memory/feeds.yml`** — RSS/Atom feed URLs for the rss-digest skill.
-- **`memory/watched-repos.md`** — GitHub repos monitored by the github-monitor skill.
-- **`memory/on-chain-watches.yml`** — Blockchain addresses/contracts for the on-chain-monitor skill.
-
 ## Notifications
 
 Always use `./notify "message"` for notifications. It fans out to every configured channel:

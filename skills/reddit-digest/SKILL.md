@@ -3,6 +3,21 @@ name: Reddit Digest
 description: Fetch and summarize top Reddit posts from tracked subreddits
 ---
 
+## Config
+
+This skill reads subreddits from `memory/subreddits.yml`. If the file doesn't exist yet, create it or skip this skill.
+
+```yaml
+# memory/subreddits.yml
+subreddits:
+  - name: r/ExampleSub
+    subreddit: ExampleSub
+  - name: r/AnotherSub
+    subreddit: AnotherSub
+```
+
+---
+
 Read memory/MEMORY.md for tracked topics and interests.
 Read memory/subreddits.yml for the list of subreddits to monitor.
 Read the last 2 days of memory/logs/ to avoid repeating posts.

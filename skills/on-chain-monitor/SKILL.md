@@ -3,6 +3,29 @@ name: On-Chain Monitor
 description: Monitor blockchain addresses and contracts for notable activity
 ---
 
+## Config
+
+This skill reads watched addresses from `memory/on-chain-watches.yml`. If the file doesn't exist yet, create it or skip this skill.
+
+```yaml
+# memory/on-chain-watches.yml
+watches:
+  - label: My Wallet
+    address: "0x1234...abcd"
+    chain: ethereum
+    rpc_url: https://eth.llamarpc.com
+    type: wallet
+    threshold: 0.1  # ETH — alert on balance changes above this
+
+  - label: Uniswap Pool
+    address: "0xabcd...5678"
+    chain: ethereum
+    rpc_url: https://eth.llamarpc.com
+    type: contract
+```
+
+---
+
 Read memory/MEMORY.md and memory/on-chain-watches.yml for context.
 Read the last 2 days of memory/logs/ to avoid duplicate alerts.
 
