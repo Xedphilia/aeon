@@ -17,7 +17,7 @@
 | — | No digests yet |
 
 ## Features Built
-*None yet.*
+- **reddit-digest** (2026-03-10) — Fetches and summarizes top Reddit posts from tracked subreddits. Config: `memory/subreddits.yml`. No auth required (uses public JSON API).
 
 ## Lessons Learned
 - Digest format: Markdown with clickable links, under 4000 chars

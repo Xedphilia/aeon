@@ -1,0 +1,18 @@
+# Subreddits for the reddit-digest skill
+# Aligned with topics tracked in MEMORY.md and feeds.yml
+
+subreddits:
+  - name: r/MachineLearning
+    subreddit: MachineLearning
+  - name: r/LocalLLaMA
+    subreddit: LocalLLaMA
+  - name: r/ethereum
+    subreddit: ethereum
+  - name: r/DeFi
+    subreddit: defi
+  - name: r/neuroscience
+    subreddit: neuroscience
+  - name: r/programming
+    subreddit: programming
+  - name: r/netsec
+    subreddit: netsec
