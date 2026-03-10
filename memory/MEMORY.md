@@ -24,4 +24,4 @@
 - Always save files AND commit before logging
 
 ## Next Priorities
-- Send first digest
+- Send first digest *(stalled since 2026-03-10 — skill built but not yet executed)*
