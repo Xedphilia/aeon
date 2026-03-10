@@ -75,7 +75,7 @@ permissions:
   issues: read
 
 concurrency:
-  group: aeon-${{ inputs.skill || 'main' }}
+  group: aeon-${{ inputs.skill || github.event.action || github.run_id }}
   cancel-in-progress: false
 
 jobs:
