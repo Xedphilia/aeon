@@ -1,6 +1,7 @@
 # Aeon configuration — TEMPORARY TEST SCHEDULE
-# All skills staggered every 5 min starting 16:15 UTC on 2026-03-10
 # Revert to normal schedules after testing.
+#
+# Multiple skills at the same time run in parallel (each gets its own job).
 
 skills:
   changelog:

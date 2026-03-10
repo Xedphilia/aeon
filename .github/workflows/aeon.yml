@@ -196,6 +196,8 @@ jobs:
       - name: Determine skill
         id: skill
         if: steps.messages.outputs.source == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.event_name }}" = "workflow_call" ]; then
             echo "name=${{ inputs.skill }}" >> "$GITHUB_OUTPUT"
@@ -241,6 +243,7 @@ jobs:
               fi
             done < aeon.yml
 
+            MATCHED=()
             for SKILL in "${SKILL_ORDER[@]}"; do
               [ "${SKILL_ENABLED[$SKILL]}" = "false" ] && continue
               SCHED="${SKILL_SCHEDULE[$SKILL]}"
@@ -252,10 +255,18 @@ jobs:
               cron_match "$C_DOM" "$DOM" || continue
               cron_match "$C_MONTH" "$MONTH" || continue
               cron_match "$C_DOW" "$DOW" || continue
-              echo "name=$SKILL" >> "$GITHUB_OUTPUT"
+              MATCHED+=("$SKILL")
               echo "Matched skill: $SKILL"
-              break
             done
+
+            # Run first match in this job, dispatch the rest in parallel
+            if [ ${#MATCHED[@]} -gt 0 ]; then
+              echo "name=${MATCHED[0]}" >> "$GITHUB_OUTPUT"
+              for ((i=1; i<${#MATCHED[@]}; i++)); do
+                echo "Dispatching: ${MATCHED[$i]}"
+                gh workflow run aeon.yml -f skill="${MATCHED[$i]}"
+              done
+            fi
           fi
 
       - name: Check if there's work
