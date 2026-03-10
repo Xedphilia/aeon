@@ -82,6 +82,7 @@ jobs:
   run:
     if: github.event_name != 'issues' || github.event.label.name == 'ai-build'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Early checkout
