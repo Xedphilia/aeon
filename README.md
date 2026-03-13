@@ -24,7 +24,7 @@ Unlike managed agent platforms, there's no vendor lock-in and no usage fees beyo
 
 | Secret | | Used by |
 |--------|----------|---------|
-| `CLAUDE_CODE_OAUTH_TOKEN` | **Required** | All skills (see auth setup below) |
+| `ANTHROPIC_API_KEY` _or_ `CLAUDE_CODE_OAUTH_TOKEN` | **Required (one of)** | All skills — Claude Code auth (see [authentication](#authentication)) |
 | `TELEGRAM_BOT_TOKEN` | **Recommended** | Notifications + bidirectional messaging ([setup](#telegram-integration)) |
 | `TELEGRAM_CHAT_ID` | **Recommended** | Notifications + bidirectional messaging |
 | `DISCORD_BOT_TOKEN` | Optional | Bidirectional messaging on Discord (read messages) |
@@ -40,21 +40,30 @@ Unlike managed agent platforms, there's no vendor lock-in and no usage fees beyo
 4. **Edit `aeon.yml`** — set `enabled: true` on the skills you want
 5. **Test** — go to **Actions > Run Skill > Run workflow** and enter a skill name (e.g. `article`)
 
-### Getting your auth token
+### Authentication
 
-**Option A: Claude Code OAuth token (recommended)** — uses your existing Claude Pro/Max subscription, no separate API billing.
+Claude Code needs one of two secrets to authenticate with Anthropic. **Set one — not both.**
+
+| Secret | What it is | Billing |
+|--------|-----------|---------|
+| `CLAUDE_CODE_OAUTH_TOKEN` | OAuth token from your Claude Pro/Max subscription | Included in your subscription |
+| `ANTHROPIC_API_KEY` | Standard API key from console.anthropic.com | Usage-based (pay per token) |
+
+Claude Code reads these automatically from the environment — there's no separate "Claude Code key." The same `ANTHROPIC_API_KEY` used for the Anthropic API works directly with Claude Code.
+
+**Option A: OAuth token (recommended)** — uses your existing Claude Pro/Max subscription, no separate API billing.
 
 1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and run:
    ```bash
    claude setup-token
    ```
 2. It opens a browser for OAuth login, then prints a long-lived token (`sk-ant-oat01-...`, valid for 1 year).
-3. Add it as the `CLAUDE_CODE_OAUTH_TOKEN` secret in your repo.
+3. Add it as `CLAUDE_CODE_OAUTH_TOKEN` in your repo secrets.
 
-**Option B: Standard API key** — usage-based billing through console.anthropic.com.
+**Option B: API key** — usage-based billing through console.anthropic.com.
 
 1. Go to [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) and create a key.
-2. Add it as `CLAUDE_CODE_OAUTH_TOKEN` in your repo secrets (it works in the same field).
+2. Add it as `ANTHROPIC_API_KEY` in your repo secrets.
 
 ## How it works
 
