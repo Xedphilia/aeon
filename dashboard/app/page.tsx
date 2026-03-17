@@ -936,7 +936,7 @@ export default function Dashboard() {
               </button>
             </div>
             <p className="text-zinc-500 text-xs mb-4">
-              Paste your Anthropic API key to enable skill runs on GitHub Actions.
+              Paste your API key or OAuth token to enable skill runs on GitHub Actions.
             </p>
             <input
               type="password"

@@ -38,12 +38,16 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => ({})) as { key?: string }
 
     if (body.key) {
-      // User pasted an API key — save as ANTHROPIC_API_KEY
-      execSync('gh secret set ANTHROPIC_API_KEY', {
-        input: body.key.trim(),
+      const key = body.key.trim()
+      // OAuth tokens (sk-ant-oat) → CLAUDE_CODE_OAUTH_TOKEN
+      // API keys (sk-ant-api) → ANTHROPIC_API_KEY
+      const isOauth = key.startsWith('sk-ant-oat')
+      const secretName = isOauth ? 'CLAUDE_CODE_OAUTH_TOKEN' : 'ANTHROPIC_API_KEY'
+      execSync(`gh secret set ${secretName}`, {
+        input: key,
         stdio: ['pipe', 'pipe', 'pipe'],
       })
-      return NextResponse.json({ ok: true, method: 'api-key' })
+      return NextResponse.json({ ok: true, method: isOauth ? 'oauth' : 'api-key', secret: secretName })
     }
 
     // No key provided — try claude setup-token and extract the sk-ant-oat token
