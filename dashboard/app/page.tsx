@@ -945,7 +945,7 @@ export default function Dashboard() {
                     </button>
                   </div>
                   <div className="text-zinc-600 text-[10px] mt-3">
-                    Must include a SKILL.md file
+                    Must include a SKILL.md or .skill file
                   </div>
                 </>
               ) : (

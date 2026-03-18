@@ -14,13 +14,40 @@ function extractSkillName(content: string): string {
   return ''
 }
 
+function isSkillFile(path: string): boolean {
+  const lower = path.toLowerCase()
+  return lower === 'skill.md' || lower.endsWith('/skill.md') || lower.endsWith('.skill')
+}
+
+function stripSkillExt(name: string): string {
+  return name.replace(/\.skill$/i, '')
+}
+
 function deriveSkillName(files: Array<{ path: string; content: string }>): { name: string; prefix: string } {
+  // First try SKILL.md
   const skillFile = files.find(f =>
     f.path === 'SKILL.md' ||
     f.path.endsWith('/SKILL.md') ||
     f.path.toLowerCase() === 'skill.md' ||
     f.path.toLowerCase().endsWith('/skill.md')
   )
+
+  // Then try *.skill files
+  const dotSkillFile = !skillFile ? files.find(f => f.path.toLowerCase().endsWith('.skill')) : null
+
+  if (dotSkillFile) {
+    const parts = dotSkillFile.path.split('/')
+    const fileName = parts[parts.length - 1]
+    const name = stripSkillExt(fileName).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
+    if (parts.length === 1) {
+      // Single file: "my-skill.skill"
+      return { name, prefix: '' }
+    }
+    // In a folder: "folder/my-skill.skill"
+    const folderName = stripSkillExt(parts[0]).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    return { name: folderName || name, prefix: parts.slice(0, -1).join('/') + '/' }
+  }
 
   if (!skillFile) {
     return { name: '', prefix: '' }
@@ -30,12 +57,13 @@ function deriveSkillName(files: Array<{ path: string; content: string }>): { nam
 
   // Case 1: "soul/SKILL.md" → name is "soul", prefix is "soul/"
   if (parts.length === 2) {
-    return { name: parts[0], prefix: parts[0] + '/' }
+    const name = stripSkillExt(parts[0])
+    return { name, prefix: parts[0] + '/' }
   }
 
   // Case 2: "some/deep/path/soul/SKILL.md" → name is "soul", prefix is "some/deep/path/soul/"
   if (parts.length > 2) {
-    const name = parts[parts.length - 2]
+    const name = stripSkillExt(parts[parts.length - 2])
     const prefix = parts.slice(0, -1).join('/') + '/'
     return { name, prefix }
   }
@@ -55,17 +83,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No files provided' }, { status: 400 })
     }
 
-    // Find SKILL.md (case-insensitive)
-    const hasSkillMd = files.some(f =>
-      f.path === 'SKILL.md' ||
-      f.path.endsWith('/SKILL.md') ||
-      f.path.toLowerCase() === 'skill.md' ||
-      f.path.toLowerCase().endsWith('/skill.md')
-    )
+    // Find SKILL.md or *.skill file
+    const hasSkillFile = files.some(f => isSkillFile(f.path))
 
-    if (!hasSkillMd) {
+    if (!hasSkillFile) {
       return NextResponse.json({
-        error: 'No SKILL.md found. A skill must contain a SKILL.md file.',
+        error: 'No SKILL.md or .skill file found.',
       }, { status: 400 })
     }
 
@@ -89,6 +112,11 @@ export async function POST(request: Request) {
 
       // Skip empty paths or directory-only entries
       if (!relativePath || relativePath.endsWith('/')) continue
+
+      // Rename .skill files to SKILL.md so the system can find them
+      if (relativePath.toLowerCase().endsWith('.skill')) {
+        relativePath = 'SKILL.md'
+      }
 
       await createFile(
         `skills/${skillName}/${relativePath}`,
