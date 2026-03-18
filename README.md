@@ -14,7 +14,7 @@ No infra. No Mac Mini. No API costs beyond Claude. Skills are markdown files. Th
 
 ## Why this over OpenClaw?
 
-OpenClaw is great if you need real-time responses and have infra to run it on. Aeon is for everything else:
+[OpenClaw](https://github.com/openclaw/openclaw) is great if you need real-time responses and have infra to run it on. Aeon is for everything else:
 
 - **Cheaper** — runs on GitHub Actions, free for public repos, ~$2/mo otherwise. No server.
 - **Built for background tasks** — digests, monitoring, research, writing. You don't need sub-second latency for any of that.
@@ -281,37 +281,6 @@ Embody this identity in all output. Never hedge with "as an AI."
 Every skill reads `CLAUDE.md`, so identity propagates automatically.
 
 **Quality check:** soul files work when they're specific enough to be wrong. *"I think most AI safety discourse is galaxy-brained cope"* is useful. *"I have nuanced views on AI safety"* is not.
-
----
-
-## Running locally
-
-```bash
-claude -p "Today is $(date +%Y-%m-%d). Read and execute the skill defined in skills/article/SKILL.md" --dangerously-skip-permissions
-```
-
----
-
-## Dashboard
-
-Local web UI to manage Aeon without editing YAML.
-
-```bash
-cd dashboard && npm install && npm run dev
-# → http://localhost:3000
-```
-
-Requires Node 20+ and GitHub CLI (`gh auth login`).
-
-| Feature | How |
-|---------|-----|
-| Toggle skills | Flips `enabled` in `aeon.yml` |
-| Set schedules | Pick time/day → writes cron for you |
-| Run skills | Triggers `gh workflow run` |
-| View runs | Lists recent runs via `gh run list` |
-| Manage secrets | `gh secret set` / `gh secret delete` |
-| Import skills | Fetches from any public repo |
-| Push to GitHub | One-click `git add` + commit + push |
 
 ---
 
