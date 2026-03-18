@@ -1,7 +1,12 @@
 ---
 name: Skill Health
 description: Check which scheduled skills haven't run recently
+var: ""
 ---
+> **${var}** — Skill name to check. If empty, checks all scheduled skills.
+
+If `${var}` is set, only check that specific skill.
+
 
 Read aeon.yml for the full list of scheduled skills.
 Read the last 7 days of memory/logs/ for evidence of skill runs.

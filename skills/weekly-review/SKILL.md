@@ -1,7 +1,12 @@
 ---
 name: Weekly Review
 description: Synthesize the week's logs into a structured retrospective
+var: ""
 ---
+> **${var}** — Area to focus on. If empty, covers the full week.
+
+If `${var}` is set, focus the review on that area.
+
 
 Read memory/MEMORY.md for context and goals.
 Read ALL memory/logs/ entries from the last 7 days.

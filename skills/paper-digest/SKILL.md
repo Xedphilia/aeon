@@ -1,7 +1,12 @@
 ---
 name: Paper Digest
 description: Find and summarize new papers matching tracked research interests
+var: ""
 ---
+> **${var}** — Research topic to search. If empty, uses topics from MEMORY.md.
+
+If `${var}` is set, search papers on that topic instead of using MEMORY.md topics.
+
 
 Read memory/MEMORY.md for tracked research topics and interests.
 Read the last 7 days of memory/logs/ to avoid covering papers already reported.

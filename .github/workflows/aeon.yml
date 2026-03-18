@@ -1,5 +1,5 @@
 name: Aeon
-run-name: "skill: ${{ inputs.skill || 'feature' }}${{ inputs.vars && format(' ({0})', inputs.vars) || '' }}"
+run-name: "skill: ${{ inputs.skill || 'feature' }}${{ inputs.var && format(' ({0})', inputs.var) || '' }}"
 
 on:
   workflow_dispatch:
@@ -50,8 +50,8 @@ on:
           - claude-opus-4-6
           - claude-sonnet-4-6
           - claude-haiku-4-5-20251001
-      vars:
-        description: 'Variables (e.g. topic=rust, query=solana NFT)'
+      var:
+        description: 'Variable (e.g. rust, solana NFT, owner/repo)'
         required: false
         type: string
   workflow_call:
@@ -185,13 +185,13 @@ jobs:
           ALLOWED="$ALLOWED,Bash(head:*),Bash(tail:*),Bash(wc:*),Bash(sort:*),Bash(grep:*)"
 
           SKILL_NAME="${{ steps.skill.outputs.name }}"
-          VARS="${{ inputs.vars }}"
+          VAR="${{ inputs.var }}"
           PROMPT="Today is $TODAY. Read and execute the skill defined in skills/${SKILL_NAME}/SKILL.md"
-          if [ -n "$VARS" ]; then
+          if [ -n "$VAR" ]; then
             PROMPT="$PROMPT
 
-          Use these variables (override any defaults in the skill file):
-          $VARS"
+          Use this variable (override the default in the skill file):
+          var=$VAR"
           fi
           echo "$PROMPT" | claude -p - \
             --model "$MODEL" --allowedTools "$ALLOWED"

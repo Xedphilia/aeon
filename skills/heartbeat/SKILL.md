@@ -1,7 +1,12 @@
 ---
 name: Heartbeat
 description: Proactive ambient check — surface anything worth attention
+var: ""
 ---
+> **${var}** — Area to focus on. If empty, runs all checks.
+
+If `${var}` is set, focus checks on that specific area.
+
 
 Read memory/MEMORY.md and the last 2 days of memory/logs/ for context.
 

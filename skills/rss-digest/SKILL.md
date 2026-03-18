@@ -1,7 +1,12 @@
 ---
 name: RSS Digest
 description: Fetch, summarize, and deliver RSS feed highlights
+var: ""
 ---
+> **${var}** — Topic filter for items. If empty, includes all relevant items.
+
+If `${var}` is set, only include feed items matching that topic.
+
 
 ## Config
 

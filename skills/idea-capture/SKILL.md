@@ -1,7 +1,12 @@
 ---
 name: Idea Capture
 description: Quick note capture triggered via Telegram — stores to memory
+var: ""
 ---
+> **${var}** — The idea or note to capture.
+
+If `${var}` is set, use it as the idea to capture.
+
 
 This skill is triggered on demand via Telegram. The user sends a quick idea, thought, or note.
 

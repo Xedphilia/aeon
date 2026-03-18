@@ -1,12 +1,12 @@
 ---
 name: Fetch Tweets
 description: Search X/Twitter for tweets by keyword, username, or both
-vars:
-  - query=AI agents
-  - count=10
+var: "AI agents"
 ---
+> **${var}** — Search query for X/Twitter — keyword, @user, or #hashtag.
 
-Today is ${today}. Search X for tweets matching **${query}**.
+
+Today is ${today}. Search X for tweets matching **${var}**.
 
 ## Steps
 
@@ -19,7 +19,7 @@ Today is ${today}. Search X for tweets matching **${query}**.
      -H "Authorization: Bearer $XAI_API_KEY" \
      -d '{
        "model": "grok-4-1-fast",
-       "input": [{"role": "user", "content": "Search X for: ${query}. Date range: '"$FROM_DATE"' to '"$TO_DATE"'. Return ${count} tweets — prioritize the most interesting, insightful, or highly-engaged posts. For each tweet include: @handle, the full text, date posted, engagement (likes/retweets if available), and the direct link (https://x.com/handle/status/ID). Return as a numbered list."}],
+       "input": [{"role": "user", "content": "Search X for: ${var}. Date range: '"$FROM_DATE"' to '"$TO_DATE"'. Return 10 tweets — prioritize the most interesting, insightful, or highly-engaged posts. For each tweet include: @handle, the full text, date posted, engagement (likes/retweets if available), and the direct link (https://x.com/handle/status/ID). Return as a numbered list."}],
        "tools": [{"type": "x_search", "from_date": "'"$FROM_DATE"'", "to_date": "'"$TO_DATE"'"}]
      }'
    ```

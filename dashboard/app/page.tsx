@@ -7,7 +7,7 @@ interface Skill {
   description: string
   enabled: boolean
   schedule: string
-  vars: string
+  var: string
 }
 
 interface Run {
@@ -25,6 +25,12 @@ interface Secret {
   description: string
   isSet: boolean
 }
+
+const MODELS = [
+  { id: 'claude-opus-4-6', label: 'Opus 4.6' },
+  { id: 'claude-sonnet-4-6', label: 'Sonnet 4.6' },
+  { id: 'claude-haiku-4-5-20251001', label: 'Haiku 4.5' },
+]
 
 const DAYS = [
   { label: 'All', value: -1 },
@@ -157,24 +163,24 @@ function ScheduleEditor({ cron, onSave }: { cron: string; onSave: (cron: string)
   )
 }
 
-function VarsEditor({ vars, onSave }: { vars: string; onSave: (vars: string) => void }) {
-  const [value, setValue] = useState(vars)
+function VarEditor({ value: initial, onSave }: { value: string; onSave: (v: string) => void }) {
+  const [value, setValue] = useState(initial)
 
   return (
     <div className="px-4 py-2 bg-zinc-900/60 border-b border-zinc-800/30 flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
-      <span className="text-[10px] text-zinc-500 shrink-0">Vars</span>
+      <span className="text-[10px] text-zinc-500 shrink-0">Var</span>
       <input
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && onSave(value)}
-        placeholder="topic=AI, query=Anthropic"
+        placeholder="e.g. neuroscience, solana, owner/repo"
         className="flex-1 bg-zinc-800 text-zinc-200 text-[10px] rounded px-2 py-1 border border-zinc-700/50 outline-none placeholder:text-zinc-600 font-mono"
       />
       <button
         type="button"
         onClick={() => onSave(value)}
-        disabled={value === vars}
+        disabled={value === initial}
         className="bg-green-600 hover:bg-green-500 text-white text-[10px] px-2.5 py-0.5 rounded transition-colors disabled:opacity-30 shrink-0"
       >
         Save
@@ -204,6 +210,7 @@ export default function Dashboard() {
   const [skills, setSkills] = useState<Skill[]>([])
   const [runs, setRuns] = useState<Run[]>([])
   const [secrets, setSecrets] = useState<Secret[]>([])
+  const [model, setModel] = useState('claude-sonnet-4-6')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState<Record<string, boolean>>({})
@@ -303,7 +310,11 @@ export default function Dashboard() {
         fetch('/api/runs'),
         fetch('/api/secrets'),
       ])
-      if (skillsRes.ok) setSkills((await skillsRes.json()).skills)
+      if (skillsRes.ok) {
+        const data = await skillsRes.json()
+        setSkills(data.skills)
+        if (data.model) setModel(data.model)
+      }
       if (runsRes.ok) setRuns((await runsRes.json()).runs)
       if (secretsRes.ok) {
         const data = await secretsRes.json()
@@ -321,6 +332,21 @@ export default function Dashboard() {
   useEffect(() => { fetchData() }, [fetchData])
 
   // --- Skill actions ---
+
+  const updateModel = async (newModel: string) => {
+    setModel(newModel)
+    try {
+      const res = await fetch('/api/skills', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: newModel }),
+      })
+      if (res.ok) {
+        flash(`Model set to ${MODELS.find(m => m.id === newModel)?.label || newModel}`)
+        checkSync()
+      }
+    } catch { /* ignore */ }
+  }
 
   const toggleSkill = async (name: string, enabled: boolean) => {
     setBusy(b => ({ ...b, [name]: true }))
@@ -390,31 +416,31 @@ export default function Dashboard() {
     return () => clearInterval(id)
   }, [refreshRuns])
 
-  const updateVars = async (name: string, vars: string) => {
+  const updateVar = async (name: string, v: string) => {
     try {
       const res = await fetch('/api/skills', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, vars }),
+        body: JSON.stringify({ name, var: v }),
       })
       if (res.ok) {
-        setSkills(s => s.map(sk => sk.name === name ? { ...sk, vars } : sk))
-        flash(`${name} vars updated`)
+        setSkills(s => s.map(sk => sk.name === name ? { ...sk, var: v } : sk))
+        flash(`${name} var updated`)
         checkSync()
       }
     } catch { /* ignore */ }
   }
 
-  const runSkill = async (name: string, vars?: string) => {
+  const runSkill = async (name: string, v?: string) => {
     setBusy(b => ({ ...b, [`r-${name}`]: true }))
     try {
       const res = await fetch(`/api/skills/${name}/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ vars: vars || '' }),
+        body: JSON.stringify({ var: v || '' }),
       })
       if (res.ok) {
-        flash(`${name} triggered${vars ? ` (${vars})` : ''}`)
+        flash(`${name} triggered${v ? ` (${v})` : ''}`)
         // Poll runs a few times so the new run appears quickly
         for (const delay of [2000, 5000, 10000, 20000]) {
           setTimeout(refreshRuns, delay)
@@ -557,6 +583,21 @@ export default function Dashboard() {
       <header className="border-b border-zinc-800/50 px-5 py-3 shrink-0">
         <div className="flex items-center justify-between">
           <img src="/logo.png" alt="AEON" className="h-16" />
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-zinc-500 uppercase tracking-wider">Model</span>
+              <select
+                value={model}
+                onChange={(e) => updateModel(e.target.value)}
+                className="bg-zinc-800 text-zinc-300 text-xs rounded-lg px-2.5 py-1.5 border border-zinc-700/50 outline-none cursor-pointer appearance-none pr-7 font-mono"
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center' }}
+              >
+                {MODELS.map(m => (
+                  <option key={m.id} value={m.id}>{m.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
           <div className="flex gap-2">
             {authStatus && !authStatus.authenticated && (
               <button
@@ -636,15 +677,15 @@ export default function Dashboard() {
                   </span>
 
                   {/* Vars badge */}
-                  {skill.vars && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/60 text-zinc-500 border border-zinc-800/50 truncate max-w-[120px] font-mono" title={skill.vars}>
-                      {skill.vars}
+                  {skill.var && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/60 text-zinc-500 border border-zinc-800/50 truncate max-w-[120px] font-mono" title={skill.var}>
+                      {skill.var}
                     </span>
                   )}
 
                   {/* Run */}
                   <button
-                    onClick={(e) => { e.stopPropagation(); runSkill(skill.name, skill.vars) }}
+                    onClick={(e) => { e.stopPropagation(); runSkill(skill.name, skill.var) }}
                     disabled={!!busy[`r-${skill.name}`] || (authStatus !== null && !authStatus.authenticated)}
                     title={authStatus !== null && !authStatus.authenticated ? 'Authenticate first' : undefined}
                     className="text-zinc-500 hover:text-zinc-300 text-[10px] px-2 py-1 rounded bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-800/50 transition-colors disabled:opacity-50 shrink-0"
@@ -653,7 +694,7 @@ export default function Dashboard() {
                   </button>
                 </div>
 
-                {/* Inline schedule + vars editor */}
+                {/* Inline schedule + var editor */}
                 {openSchedule === skill.name && (
                   <>
                     <ScheduleEditor
@@ -663,9 +704,9 @@ export default function Dashboard() {
                         setOpenSchedule(null)
                       }}
                     />
-                    <VarsEditor
-                      vars={skill.vars}
-                      onSave={(vars) => updateVars(skill.name, vars)}
+                    <VarEditor
+                      value={skill.var}
+                      onSave={(v) => updateVar(skill.name, v)}
                     />
                   </>
                 )}

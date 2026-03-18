@@ -1,7 +1,12 @@
 ---
 name: Memory Flush
 description: Promote important recent log entries into MEMORY.md
+var: ""
 ---
+> **${var}** — Topic to focus on. If empty, flushes all recent activity.
+
+If `${var}` is set, only flush entries related to that topic.
+
 
 Read memory/MEMORY.md for current memory state.
 Read the last 3 days of memory/logs/ for recent activity.

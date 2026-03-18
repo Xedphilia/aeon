@@ -1,7 +1,12 @@
 ---
 name: Goal Tracker
 description: Compare current progress against goals stored in MEMORY.md
+var: ""
 ---
+> **${var}** — Specific goal to track. If empty, tracks all goals in MEMORY.md.
+
+If `${var}` is set, focus only on that specific goal.
+
 
 Read memory/MEMORY.md — specifically the "Goals" or "Next Priorities" section.
 Read the last 14 days of memory/logs/ for evidence of progress.

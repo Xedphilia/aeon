@@ -1,7 +1,12 @@
 ---
 name: Morning Brief
 description: Aggregated daily briefing — digests, priorities, and what's ahead
+var: ""
 ---
+> **${var}** — Area to emphasize. If empty, covers all areas.
+
+If `${var}` is set, emphasize that area in the briefing.
+
 
 Read memory/MEMORY.md for goals, priorities, and tracked items.
 Read yesterday's and today's memory/logs/ entries.

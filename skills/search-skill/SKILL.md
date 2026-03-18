@@ -1,13 +1,16 @@
 ---
 name: Search Skills
 description: Search the open agent skills ecosystem for useful skills to install
+var: ""
 ---
+> **${var}** — Capability to search for. If empty, searches based on current gaps.
+
 
 Read `memory/MEMORY.md` for context on current goals and capability gaps.
 
 Steps:
 1. Determine what to search for:
-   - If a `query` variable was provided, use that.
+   - If `${var}` is set, use that.
    - Otherwise, look at recent logs and memory for capability gaps, failed skills, or requested features that could be solved by an existing skill.
 2. Search for skills using the CLI:
    ```bash

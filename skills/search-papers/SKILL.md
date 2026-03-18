@@ -1,13 +1,16 @@
 ---
 name: Search Academic Papers
 description: Search for recent academic papers on topics of interest and save a summary
+var: ""
 ---
+> **${var}** — Search query for papers. If empty, picks topics from MEMORY.md.
+
 
 Read `memory/MEMORY.md` for context on current interests and recent activity.
 
 Steps:
 1. Determine search topics:
-   - If a `query` variable was provided, use that as the search topic.
+   - If `${var}` is set, use that as the search topic.
    - Otherwise, pick 1-2 topics from current priorities or recent articles in memory (AI, crypto, consciousness, etc.).
 2. For each topic, search Semantic Scholar using curl:
    ```bash

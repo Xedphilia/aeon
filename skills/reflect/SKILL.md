@@ -1,7 +1,12 @@
 ---
 name: Weekly Reflect
 description: Review recent activity, consolidate memory, and prune stale entries
+var: ""
 ---
+> **${var}** — Area to focus on. If empty, reviews everything.
+
+If `${var}` is set, focus the reflection on that specific area.
+
 
 Today is ${today}. Your task is to review the agent's recent activity and maintain long-term memory.
 

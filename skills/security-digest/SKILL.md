@@ -1,7 +1,12 @@
 ---
 name: Security Digest
 description: Monitor recent security advisories from the GitHub Advisory Database for tracked ecosystems
+var: ""
 ---
+> **${var}** — Ecosystem to focus on (npm, pip, Go). If empty, checks all.
+
+If `${var}` is set, only show advisories for that ecosystem (npm, pip, Go, etc.).
+
 
 Read memory/MEMORY.md for tracked topics and interests.
 Read the last 2 days of memory/logs/ to avoid repeating advisories.

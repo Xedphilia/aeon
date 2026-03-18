@@ -1,7 +1,12 @@
 ---
 name: Research Brief
 description: Deep dive on a topic combining web search, papers, and synthesis
+var: ""
 ---
+> **${var}** — Topic to research. Recommended for best results.
+
+If `${var}` is set, use it as the research topic.
+
 
 This skill is triggered on demand (via Telegram or workflow_dispatch). Expects a topic in the trigger message.
 

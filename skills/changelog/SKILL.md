@@ -1,7 +1,12 @@
 ---
 name: Changelog
 description: Generate a changelog from recent commits across watched repos
+var: ""
 ---
+> **${var}** — Repo (owner/repo) to scan. If empty, scans all watched repos.
+
+If `${var}` is set, only scan that repo (owner/repo format).
+
 
 ## Config
 

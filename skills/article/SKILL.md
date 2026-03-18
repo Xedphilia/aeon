@@ -1,7 +1,12 @@
 ---
 name: Daily Article
 description: Research trending topics and write a publication-ready article
+var: ""
 ---
+> **${var}** — Topic to write about. If empty, auto-selects a trending topic.
+
+If `${var}` is set, write about that topic instead of auto-selecting.
+
 
 Today is ${today}. Your task is to research and write a high-quality article.
 

@@ -1,7 +1,12 @@
 ---
 name: Feature Builder
 description: Build new features from GitHub issues or improve the agent
+var: ""
 ---
+> **${var}** — Feature to build. If empty, picks from GitHub issues or memory.
+
+If `${var}` is set, build that feature instead of picking from issues.
+
 
 Today is ${today}. Your task is to build a new feature for this repository.
 

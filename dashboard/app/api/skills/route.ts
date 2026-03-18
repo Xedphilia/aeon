@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server'
 import { getFileContent, getDirectory, updateFile } from '@/lib/github'
 
-function parseConfig(yaml: string): Record<string, { enabled: boolean; schedule: string; vars: string }> {
-  const skills: Record<string, { enabled: boolean; schedule: string; vars: string }> = {}
+function parseModel(yaml: string): string {
+  const match = yaml.match(/^model:\s*(\S+)/m)
+  return match?.[1] || 'claude-sonnet-4-6'
+}
+
+function parseConfig(yaml: string): Record<string, { enabled: boolean; schedule: string; var: string }> {
+  const skills: Record<string, { enabled: boolean; schedule: string; var: string }> = {}
   const regex = / {2}([a-z][a-z0-9-]*):\s*\n((?:\s{4}\S.*\n)*)/g
   let match
   while ((match = regex.exec(yaml)) !== null) {
@@ -11,7 +16,7 @@ function parseConfig(yaml: string): Record<string, { enabled: boolean; schedule:
     skills[name] = {
       enabled: /enabled:\s*true/.test(block),
       schedule: block.match(/schedule:\s*"([^"]*)"/)?.[ 1] || '',
-      vars: block.match(/vars:\s*"([^"]*)"/)?.[ 1] || '',
+      var: block.match(/var:\s*"([^"]*)"/)?.[ 1] || '',
     }
   }
   return skills
@@ -61,10 +66,11 @@ export async function GET() {
       description: descs.find(d => d.name === name)?.description || '',
       enabled: config[name]?.enabled ?? false,
       schedule: config[name]?.schedule || '0 12 * * *',
-      vars: config[name]?.vars || '',
+      var: config[name]?.var || '',
     }))
 
-    return NextResponse.json({ skills })
+    const model = parseModel(configResult.content)
+    return NextResponse.json({ skills, model })
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json({ error: msg }, { status: 500 })
@@ -73,9 +79,14 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
-    const { name, enabled, schedule, vars } = await request.json()
+    const { name, enabled, schedule, var: skillVar, model } = await request.json()
     const { content, sha } = await getFileContent('aeon.yml')
     let updated = content
+
+    // Update top-level model field
+    if (typeof model === 'string' && model) {
+      updated = updated.replace(/^model:\s*\S+/m, `model: ${model}`)
+    }
 
     if (typeof enabled === 'boolean') {
       const re = new RegExp(`(  ${escapeRe(name)}:\\n    enabled: )(true|false)`)
@@ -89,26 +100,27 @@ export async function PATCH(request: Request) {
       updated = updated.replace(re, `$1${schedule}"`)
     }
 
-    if (typeof vars === 'string') {
+    if (typeof skillVar === 'string') {
       const escaped = escapeRe(name)
-      const hasVars = new RegExp(`  ${escaped}:[\\s\\S]*?vars: "`)
-      if (hasVars.test(updated)) {
-        // Update existing vars line
+      const hasVar = new RegExp(`  ${escaped}:[\\s\\S]*?var: "`)
+      if (hasVar.test(updated)) {
+        // Update existing var line
         const re = new RegExp(
-          `(  ${escaped}:\\n    enabled: (?:true|false)\\n    schedule: "[^"]*"\\n    vars: ")[^"]*"`,
+          `(  ${escaped}:\\n    enabled: (?:true|false)\\n    schedule: "[^"]*"\\n    var: ")[^"]*"`,
         )
-        updated = updated.replace(re, `$1${vars}"`)
-      } else if (vars) {
-        // Add vars line after schedule
+        updated = updated.replace(re, `$1${skillVar}"`)
+      } else if (skillVar) {
+        // Add var line after schedule
         const re = new RegExp(
           `(  ${escaped}:\\n    enabled: (?:true|false)\\n    schedule: "[^"]*")`,
         )
-        updated = updated.replace(re, `$1\n    vars: "${vars}"`)
+        updated = updated.replace(re, `$1\n    var: "${skillVar}"`)
       }
     }
 
     if (updated !== content) {
-      await updateFile('aeon.yml', updated, sha, `chore: update ${name} config`)
+      const msg = model ? `chore: set model to ${model}` : `chore: update ${name} config`
+      await updateFile('aeon.yml', updated, sha, msg)
     }
 
     return NextResponse.json({ ok: true })

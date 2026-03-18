@@ -1,7 +1,12 @@
 ---
 name: Build Skill
 description: Design and build a new reusable skill
+var: ""
 ---
+> **${var}** — What skill to build. If empty, picks from issues or capability gaps.
+
+If `${var}` is set, build that specific skill instead of auto-selecting.
+
 
 Your task is to design and build a new reusable skill.
 

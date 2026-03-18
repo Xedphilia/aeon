@@ -1,7 +1,12 @@
 ---
 name: Tweet Digest
 description: Aggregate and summarize tweets from tracked accounts
+var: ""
 ---
+> **${var}** — Account or topic to filter by. If empty, checks all tracked accounts.
+
+If `${var}` is set, filter tweets by that account or topic.
+
 
 Read memory/MEMORY.md for context and tracked Twitter/X accounts.
 Read the last 2 days of memory/logs/ to avoid repeating items.

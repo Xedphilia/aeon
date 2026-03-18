@@ -1,7 +1,12 @@
 ---
 name: Self Review
 description: Weekly audit of what Aeon did, what failed, and what to improve
+var: ""
 ---
+> **${var}** — Area to focus on. If empty, reviews everything.
+
+If `${var}` is set, focus the review on that specific area.
+
 
 Read memory/MEMORY.md for context and goals.
 Read ALL memory/logs/ entries from the last 7 days.

@@ -1,7 +1,12 @@
 ---
 name: Wallet Digest
 description: Summarize recent wallet activity across tracked addresses
+var: ""
 ---
+> **${var}** — Wallet label to check. If empty, checks all watched wallets.
+
+If `${var}` is set, only check the wallet with that label.
+
 
 ## Config
 

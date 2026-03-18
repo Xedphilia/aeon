@@ -1,7 +1,12 @@
 ---
 name: PR Review
 description: Auto-review open PRs on watched repos and post summary comments
+var: ""
 ---
+> **${var}** — Repo (owner/repo) to review. If empty, reviews all watched repos.
+
+If `${var}` is set, only review PRs on that repo (owner/repo format).
+
 
 ## Config
 
